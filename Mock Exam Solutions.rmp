@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.10.011">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.10.011" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.10.011" expanded="true" height="68" name="Retrieve Products" width="90" x="45" y="85">
+        <parameter key="repository_entry" value="//Samples/data/Products"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.10.011" expanded="true" height="68" name="Retrieve Transactions" width="90" x="45" y="187">
+        <parameter key="repository_entry" value="//Samples/data/Transactions"/>
+      </operator>
+      <operator activated="true" class="concurrency:join" compatibility="9.10.011" expanded="true" height="82" name="Join" width="90" x="246" y="136">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="Product ID" value="Product ID"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="9.10.011" expanded="true" height="82" name="Generate Attributes" width="90" x="447" y="136">
+        <list key="function_descriptions">
+          <parameter key="total expenditure" value="Amount * Price"/>
+        </list>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.10.011" expanded="true" height="68" name="Retrieve Golf" width="90" x="45" y="493">
+        <parameter key="repository_entry" value="//Samples/data/Golf"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.10.011" expanded="true" height="82" name="Set Role" width="90" x="179" y="493">
+        <parameter key="attribute_name" value="Wind"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.10.011" expanded="true" height="82" name="Set Role (2)" width="90" x="313" y="493">
+        <parameter key="attribute_name" value="Wind"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.10.011" expanded="true" height="103" name="Multiply" width="90" x="447" y="493"/>
+      <operator activated="true" class="h2o:logistic_regression" compatibility="9.10.001" expanded="true" height="124" name="Logistic Regression" width="90" x="581" y="493">
+        <parameter key="solver" value="AUTO"/>
+        <parameter key="reproducible" value="false"/>
+        <parameter key="maximum_number_of_threads" value="4"/>
+        <parameter key="use_regularization" value="false"/>
+        <parameter key="lambda_search" value="false"/>
+        <parameter key="number_of_lambdas" value="0"/>
+        <parameter key="lambda_min_ratio" value="0.0"/>
+        <parameter key="early_stopping" value="true"/>
+        <parameter key="stopping_rounds" value="3"/>
+        <parameter key="stopping_tolerance" value="0.001"/>
+        <parameter key="standardize" value="true"/>
+        <parameter key="non-negative_coefficients" value="false"/>
+        <parameter key="add_intercept" value="true"/>
+        <parameter key="compute_p-values" value="true"/>
+        <parameter key="remove_collinear_columns" value="true"/>
+        <parameter key="missing_values_handling" value="MeanImputation"/>
+        <parameter key="max_iterations" value="0"/>
+        <parameter key="max_runtime_seconds" value="0"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="9.10.011" expanded="true" height="82" name="Apply Model" width="90" x="715" y="493">
+        <list key="application_parameters"/>
+        <parameter key="create_view" value="false"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.10.011" expanded="true" height="68" name="Retrieve Titanic" width="90" x="45" y="952">
+        <parameter key="repository_entry" value="//Samples/data/Titanic"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.10.011" expanded="true" height="82" name="Set Role (3)" width="90" x="179" y="952">
+        <parameter key="attribute_name" value="Survived"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="split_data" compatibility="9.10.011" expanded="true" height="103" name="Split Data" width="90" x="313" y="952">
+        <enumeration key="partitions">
+          <parameter key="ratio" value="0.8"/>
+          <parameter key="ratio" value="0.2"/>
+        </enumeration>
+        <parameter key="sampling_type" value="automatic"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.10.011" expanded="true" height="103" name="Multiply (3)" width="90" x="581" y="1258"/>
+      <operator activated="true" class="multiply" compatibility="9.10.011" expanded="true" height="103" name="Multiply (2)" width="90" x="447" y="952"/>
+      <operator activated="true" class="concurrency:parallel_decision_tree" compatibility="9.10.011" expanded="true" height="103" name="Decision Tree" width="90" x="581" y="1105">
+        <parameter key="criterion" value="gain_ratio"/>
+        <parameter key="maximal_depth" value="10"/>
+        <parameter key="apply_pruning" value="true"/>
+        <parameter key="confidence" value="0.1"/>
+        <parameter key="apply_prepruning" value="true"/>
+        <parameter key="minimal_gain" value="0.01"/>
+        <parameter key="minimal_leaf_size" value="2"/>
+        <parameter key="minimal_size_for_split" value="4"/>
+        <parameter key="number_of_prepruning_alternatives" value="3"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="9.10.011" expanded="true" height="82" name="Apply Model (3)" width="90" x="782" y="1105">
+        <list key="application_parameters"/>
+        <parameter key="create_view" value="false"/>
+      </operator>
+      <operator activated="true" class="performance" compatibility="9.10.011" expanded="true" height="82" name="Performance (2)" width="90" x="916" y="1105">
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <operator activated="true" class="h2o:logistic_regression" compatibility="9.10.001" expanded="true" height="124" name="Logistic Regression (2)" width="90" x="581" y="952">
+        <parameter key="solver" value="AUTO"/>
+        <parameter key="reproducible" value="false"/>
+        <parameter key="maximum_number_of_threads" value="4"/>
+        <parameter key="use_regularization" value="false"/>
+        <parameter key="lambda_search" value="false"/>
+        <parameter key="number_of_lambdas" value="0"/>
+        <parameter key="lambda_min_ratio" value="0.0"/>
+        <parameter key="early_stopping" value="true"/>
+        <parameter key="stopping_rounds" value="3"/>
+        <parameter key="stopping_tolerance" value="0.001"/>
+        <parameter key="standardize" value="true"/>
+        <parameter key="non-negative_coefficients" value="false"/>
+        <parameter key="add_intercept" value="true"/>
+        <parameter key="compute_p-values" value="true"/>
+        <parameter key="remove_collinear_columns" value="true"/>
+        <parameter key="missing_values_handling" value="MeanImputation"/>
+        <parameter key="max_iterations" value="0"/>
+        <parameter key="max_runtime_seconds" value="0"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="9.10.011" expanded="true" height="82" name="Apply Model (2)" width="90" x="782" y="952">
+        <list key="application_parameters"/>
+        <parameter key="create_view" value="false"/>
+      </operator>
+      <operator activated="true" class="performance" compatibility="9.10.011" expanded="true" height="82" name="Performance" width="90" x="916" y="952">
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <connect from_op="Retrieve Products" from_port="output" to_op="Join" to_port="left"/>
+      <connect from_op="Retrieve Transactions" from_port="output" to_op="Join" to_port="right"/>
+      <connect from_op="Join" from_port="join" to_op="Generate Attributes" to_port="example set input"/>
+      <connect from_op="Generate Attributes" from_port="example set output" to_port="result 1"/>
+      <connect from_op="Retrieve Golf" from_port="output" to_op="Set Role" to_port="example set input"/>
+      <connect from_op="Set Role" from_port="example set output" to_op="Set Role (2)" to_port="example set input"/>
+      <connect from_op="Set Role (2)" from_port="example set output" to_op="Multiply" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Logistic Regression" to_port="training set"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Apply Model" to_port="unlabelled data"/>
+      <connect from_op="Logistic Regression" from_port="model" to_op="Apply Model" to_port="model"/>
+      <connect from_op="Apply Model" from_port="labelled data" to_port="result 2"/>
+      <connect from_op="Retrieve Titanic" from_port="output" to_op="Set Role (3)" to_port="example set input"/>
+      <connect from_op="Set Role (3)" from_port="example set output" to_op="Split Data" to_port="example set"/>
+      <connect from_op="Split Data" from_port="partition 1" to_op="Multiply (2)" to_port="input"/>
+      <connect from_op="Split Data" from_port="partition 2" to_op="Multiply (3)" to_port="input"/>
+      <connect from_op="Multiply (3)" from_port="output 1" to_op="Apply Model (2)" to_port="unlabelled data"/>
+      <connect from_op="Multiply (3)" from_port="output 2" to_op="Apply Model (3)" to_port="unlabelled data"/>
+      <connect from_op="Multiply (2)" from_port="output 1" to_op="Logistic Regression (2)" to_port="training set"/>
+      <connect from_op="Multiply (2)" from_port="output 2" to_op="Decision Tree" to_port="training set"/>
+      <connect from_op="Decision Tree" from_port="model" to_op="Apply Model (3)" to_port="model"/>
+      <connect from_op="Apply Model (3)" from_port="labelled data" to_op="Performance (2)" to_port="labelled data"/>
+      <connect from_op="Performance (2)" from_port="performance" to_port="result 4"/>
+      <connect from_op="Logistic Regression (2)" from_port="model" to_op="Apply Model (2)" to_port="model"/>
+      <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Performance" to_port="labelled data"/>
+      <connect from_op="Performance" from_port="performance" to_port="result 3"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+      <portSpacing port="sink_result 5" spacing="0"/>
+      <description align="center" color="yellow" colored="false" height="323" resized="true" width="1040" x="29" y="32">1. Compute the dollar expenditure by each customer (note: only one transaction per customer per product type in data)</description>
+      <description align="center" color="blue" colored="true" height="63" resized="true" width="1041" x="29" y="366">1. Student comments:</description>
+      <description align="center" color="yellow" colored="false" height="323" resized="false" width="1040" x="31" y="453">2. Consider the golf dataset below. Create predictions for whether there will be wind as a function of the remaining variables using a decision tree</description>
+      <description align="center" color="blue" colored="true" height="63" resized="false" width="1041" x="31" y="788">2. Student comments:</description>
+      <description align="center" color="yellow" colored="false" height="53" resized="true" width="1033" x="34" y="879">3. Using the dataset below, manually set up split validation using a 20/80 ratio to compare two different prediction methods of Titanic's passengers' fates. Explain which model you would use and why</description>
+      <description align="center" color="blue" colored="true" height="63" resized="false" width="1041" x="30" y="1407">3. Student comments:</description>
+    </process>
+  </operator>
+</process>
